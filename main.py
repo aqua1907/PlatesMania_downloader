@@ -1,20 +1,22 @@
 from bs4 import BeautifulSoup
 import requests
+import os
 from PIL import Image
 from io import BytesIO
 import json
 from tqdm import tqdm
+import time
 
 main_url = "http://platesmania.com"
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"}
 
-
+count = 918
 dict_json = {}
 with open("images_annotations.json", "r+") as json_file:
     data = json.load(json_file)
 
-    loop = tqdm(range(200, 400), total=len(range(200)), leave=False)
+    loop = tqdm(range(101), total=len(range(200)), leave=False)
     for i in loop:
         if i == 0:
             main_gallery_url = "http://platesmania.com/ua/gallery"
@@ -47,7 +49,9 @@ with open("images_annotations.json", "r+") as json_file:
                 number_plate = number_plate.replace(" ", "_")
 
                 # Create request to the image url of car, convert from bytes to readable format for Pillow
-                image_path = f'images/image_{number_plate}.jpg'
+                image_savefile = str(count).zfill(5) + ".jpg"
+                image_path = os.path.join("images", image_savefile)
+                count += 1
                 image = requests.get(image, headers=headers)
                 img = BytesIO(image.content)
                 img = Image.open(img)
